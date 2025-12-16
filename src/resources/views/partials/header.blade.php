@@ -786,7 +786,7 @@
                                 </span>
                             </span>
                         </button>
-                        <button type="button" class="btn btn-square btn-link text-center" id="showNotification"
+                        {{-- <button type="button" class="btn btn-square btn-link text-center" id="showNotification"
                             data-bs-toggle="tooltip" data-bs-placement="bottom" title="Notifications">
                             <span class="bi bi-bell position-relative">
                                 <span
@@ -794,7 +794,7 @@
                                     <span class="visually-hidden">New alerts</span>
                                 </span>
                             </span>
-                        </button>
+                        </button> --}}
                     </div>
                     <div class="col-auto align-self-center px-0  d-none d-xxxl-block">
                         <i class="bi bi-three-dots-vertical opacity-3 text-secondary"

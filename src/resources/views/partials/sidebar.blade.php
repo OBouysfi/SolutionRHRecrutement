@@ -197,7 +197,7 @@
                             </li>
                         @endcan
 
-                        @can('test-technique-access')
+                        {{-- @can('test-technique-access')
                             <li class="nav-item dropdown" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ __("generated.Test Technique") }}">
                                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="false"
                                     data-bs-display="static" href="#" role="button" aria-expanded="false"
@@ -282,7 +282,7 @@
                                     @endcan
                                 </ul>
                             </li>
-                        @endcan
+                        @endcan --}}
                         @can('event-access')
                             <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ __("generated.Calendrier") }}">
                                 <a class="nav-link active" aria-current="page" href="{{ route('events.listing') }}"
@@ -328,7 +328,7 @@
                                             </a>
                                         </li>
                                     @endcan
-                                    @can('personnalisation-access')
+                                    {{-- @can('personnalisation-access')
                                         <li>
                                             <a class="dropdown-item nav-link" href="{{ route('setting.personnalisation') }}"
                                                 data-bs-placement="top" title="{{ __("generated.Personnalisation") }}">
@@ -338,7 +338,7 @@
                                                 <div class="arrow"><i class="bi bi-chevron-right"></i></div>
                                             </a>
                                         </li>
-                                    @endcan
+                                    @endcan --}}
                                     @can('prametrage-access')
                                         <li class="nav-item dropdown">
                                             <a class="dropdown-item nav-link dropdown-toggle" href="#"
