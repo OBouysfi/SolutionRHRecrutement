@@ -140,7 +140,7 @@
                                         </li>
                                     @endcan
 
-                                    @can('mission-indicators-show')
+                                    {{-- @can('mission-indicators-show')
                                         <li>
                                             <a class="dropdown-item nav-link" href="{{ route('jobOffer.indicators') }}"
                                                 data-bs-placement="top" title="{{ __("generated.Indicateurs clés") }}">
@@ -150,18 +150,18 @@
                                                 <div class="arrow"><i class="bi bi-chevron-right"></i></div>
                                             </a>
                                         </li>
-                                    @endcan
-                                    <li>
+                                    @endcan --}}
+                                    {{-- <li>
                                         <a class="dropdown-item nav-link" href="{{ route('jobOffer.history') }}">
                                             <div class="avatar avatar-40 icon"><i class="bi bi-hourglass"></i>
                                             </div>
                                             <div class="col align-self-center">{{ __("generated.Historique") }}</div>
                                             <div class="arrow"><i class="bi bi-chevron-right"></i></div>
                                         </a>
-                                    </li>
+                                    </li> --}}
 
                                     {{-- @can('mission-indicators-show') --}}
-                                    <li>
+                                    {{-- <li>
                                         <a class="dropdown-item nav-link" href="{{ route('rapportFinance.listing') }}"
                                             data-bs-placement="top" title="{{ __("generated.Indicateurs clés") }}">
                                             <div class="avatar avatar-40 icon"><i class="bi bi-file-bar-graph"></i>
@@ -169,7 +169,7 @@
                                             <div class="col align-self-center">{{ __("generated.Coût du recrutement") }}</div>
                                             <div class="arrow"><i class="bi bi-chevron-right"></i></div>
                                         </a>
-                                    </li>
+                                    </li> --}}
                                     {{-- @endcan --}}
                                 </ul>
                             </li>
