@@ -10,3 +10,6 @@ src/composer.lock
 src/supervisord.log
 src/supervisord.log
 docker/configs/laravel.env
+
+# Snyk Security Extension - AI Rules (auto-generated)
+.github/instructions/snyk_rules.instructions.md

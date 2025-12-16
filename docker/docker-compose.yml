@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.8'
 
 volumes:
   vendor:
@@ -8,9 +8,9 @@ services:
     build:
       context: ..
       dockerfile: ./docker/Dockerfile
-    container_name: humanjobs-recruitment-app
+    container_name: SolutionRHRecrutement-app
     ports:
-      - "84:80"
+      - "89:80"
       - "6001:6001"
 
     env_file:
@@ -24,14 +24,14 @@ services:
 
   mysql-db:
     image: mysql:5.7.36
-    container_name: humanjobs-recruitment-mysql
+    container_name: SolutionRHRecrutement-mysql
     restart: unless-stopped
     volumes:
       - ./mysql-data:/var/lib/mysql
       - ../src/tests/dump:/docker-entrypoint-initdb.d/
     tty: true
     ports:
-      - "3307:3306"
+      - "3309:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=root
     networks:
@@ -39,27 +39,27 @@ services:
 
   redis:
     image: "redis:alpine"
-    container_name: humanjobs-recruitment-redis
+    container_name: SolutionRHRecrutement-redis
     hostname: redis
     ports:
-      - "6381:6379"
+      - "6389:6379"
     networks:
       - laravel
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
-    container_name: humanjobs-recruitment-phpmyadmin
+    container_name: SolutionRHRecrutement-phpmyadmin
     restart: always
     depends_on:
       - mysql-db
     environment:
-      - PMA_HOST=humanjobs-recruitment-mysql
+      - PMA_HOST=SolutionRHRecrutement-mysql
       - PMA_PORT=3306
       - PMA_ARBITRARY=1
     volumes:
       - ./configs/pma.ini:/usr/local/etc/php/conf.d/php.ini
     ports:
-      - "8084:80"
+      - "8089:80"
     networks:
       - laravel
 
