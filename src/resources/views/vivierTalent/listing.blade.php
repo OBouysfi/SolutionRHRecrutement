@@ -85,13 +85,13 @@
                 <div class="col-12 col-md mb-2 mb-sm-0">
                     <h5 class="mb-0 text-bw">{{ __('generated.talent_pool') }}</h5>
                 </div>
-                <div class="col col-sm-auto">
+                {{-- <div class="col col-sm-auto">
                     <div class="input-group input-group-md">
                         <input type="text" class="form-control bg-none px-0" value="" id="titlecalendar" />
                         <span class="input-group-text text-secondary bg-none" id="titlecalandershow"><i
                                 class="bi bi-calendar-event"></i></span>
                     </div>
-                </div>
+                </div> --}}
                 <div class="col col-sm-auto translated_text" style="margin-right: -14px;" data-bs-toggle="tooltip"
                     data-bs-placement="top" title="{{ __("generated.contact") }}">
                     <a href="{{ route('support.index') }}" class="text-decoration-none">
