@@ -1,0 +1,1 @@
+<a href="{{ route('technicalTest.sheet.detail', ['resultId' => $result?->id,'testId' => $result?->test->id, 'profileId' => $result?->profile->id]) }}"><i class="bi bi-file-earmark-text translated_text" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __("generated.Détail") }}" style="font-size: 19px;margin-right: 9px;color: #2473cf;"></i></a>

@@ -1,0 +1,512 @@
+@extends('layouts.master')
+
+@section('title', 'HumanJobs - Recommmandations')
+
+@section('css_header')
+
+<style>
+    .sidebar {
+        display: none !important;
+    }
+    .sidebar-wrap{
+        display: none !important;
+    }
+    .menu-btn{
+        display: none !important;
+    }
+</style>
+    <style>
+        .footer-tabs .nav-item>.nav-link {
+            display: block !important;
+        }
+
+        .squered-pill {
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            text-align: center;
+            line-height: 2px;
+            background-color: rgba(38, 182, 234, .3);
+            border: none;
+            color: #005dc7;
+            padding: 8px !important;
+        }
+
+        .squered-pill i {
+            color: #005dc7;
+            padding: 5px
+        }
+
+        .squered-pill:hover,
+        .squered-pill:active,
+        .squered-pill:focus {
+            background-color: rgba(38, 182, 234, 1);
+            outline: none;
+            border: none;
+        }
+
+        #swal2_select_chosen,
+        .swal2-select {
+            display: none;
+        }
+
+        .file-upload {
+            position: relative;
+            width: 100%;
+            /* max-width: 600px; */
+            height: 150px;
+            border: 2px dashed #cccccc;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--adminux-theme-bg);
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+            flex-direction: column;
+        }
+
+        .file-upload:hover {
+            border-color: rgba(38, 182, 234, 1);
+        }
+
+        .file-upload input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-upload label {
+            font-size: 16px;
+            /* color: #6c757d; */
+            pointer-events: none;
+            margin-bottom: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .file-preview {
+            margin-top: 10px;
+            width: 100px;
+            height: 100px;
+            display: none;
+            background-size: cover;
+            background-position: center;
+            border-radius: 10px;
+            border: 1px solid #cccccc;
+        }
+
+
+        .card .card-footer.footer-1 {
+            background-color: rgba(38, 182, 234, 1);
+            border-top: 0px solid transparent;
+            margin-top: 1px;
+            padding: calc(var(--bs-gutter-x)* 0.5);
+        }
+
+        .card .card-footer.footer-2 {
+            background-color: #b7131bad;
+            border-top: 0px solid transparent;
+            margin-top: 1px;
+            padding: calc(var(--bs-gutter-x)* 0.5);
+        }
+
+        .ck.ck-content.ck-editor__editable.ck-rounded-corners.ck-editor__editable_inline.ck-blurred {
+            height: 312px !important;
+        }
+
+        .ck-blurred.ck.ck-content.ck-editor__editable.ck-rounded-corners.ck-editor__editable_inline p {
+            text-align: justify;
+        }
+
+        .custom-color-icon i {
+            color: #005dc7 !important;
+        }
+
+        /* .dropdown-menu .form-control,
+                .dropdown-menu .form-select,
+                .dropdown-menu .input-group-text,
+                .dropdown-menu .chosen-choices,
+                .dropdown-menu .chosen-single,
+                .modal-dialog .form-control,
+                .modal-dialog .form-select,
+                .modal-dialog .input-group-text,
+                .modal-dialog .chosen-choices,
+                .modal-dialog .chosen-single,
+                .card .form-control,
+                .card .form-select,
+                .card .input-group-text,
+                .card .chosen-choices,
+                .card .chosen-single {
+                    background-color: var(--adminux-theme-bg) !important;
+                }
+
+                .form-control,
+                .form-select {
+                    background-color: var(--adminux-theme-bg) !important;
+                } */
+
+        .btn-annuler:hover {
+            background-color: #e4e5e7;
+            color: #686767;
+        }
+
+        .btn-ajouter {
+            background-color: #005dc7;
+        }
+
+        .btn-ajouter:hover {
+            background-color: #005dc7 !important;
+        }
+
+        .dz-default.dz-message {
+            margin-top: 8%;
+        }
+
+        .lettre-3 .dz-default.dz-message {
+            margin-top: 4%;
+        }
+
+
+        .title.custom-title {
+            border-bottom: 0 !important;
+        }
+
+        .title.custom-title:after {
+            width: 63px !important;
+        }
+
+        @media (min-width: 1400px) {
+
+            .container-xxl,
+            .container-xl,
+            .container-lg,
+            .container-md,
+            .container-sm,
+            .container {
+                max-width: 1470px;
+            }
+        }
+    </style>
+    <style>
+        .custom-file-input {
+            display: none;
+        }
+
+        .btn-light {
+            background-color: var(--adminux-theme-bg);
+            color: #005dc7;
+            border: 1px solid #ced4da;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .btn i:first-child {
+            margin-right: 0 !important;
+        }
+
+        .btn-light:hover {
+            background-color: #e2e6ea;
+        }
+
+        @media (max-width: 768px) {
+            .file-upload label {
+                font-size: 12px !important;
+            }
+        }
+
+        .action-check {
+            border: 1px solid #ccc;
+            background-color: white;
+            transition: background-color 0.3s, border-color 0.3s;
+            border-radius: 10px;
+        }
+
+        input[type="radio"]:checked+.action-check {
+            background-color: #4c9ee1;
+            color: white;
+            border-color: #4c9ee1;
+            border-radius: 10px;
+        }
+
+        .chosen-container .chosen-choices li.search-choice {
+            background: #4c9ee1 !important;
+            border-color: #4c9ee1 !important;
+        }
+
+        .input-group .chosen-container {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        .tagify__input,
+        .tagify__tag {
+            margin: -5px 0 0 0 !important;
+        }
+
+        .tagify__tag {
+            border: 2px solid #26b6ea;
+            border-radius: 6px
+        }
+    </style>
+    <style>
+        form .position-absolute {
+            top: 90px !important;
+        }
+
+        .custom-image-logo {
+            top: 90px !important;
+            right: 15px !important;
+        }
+
+
+        .card {
+            box-shadow: none !important;
+        }
+
+        .rounded.poste-chosen .chosen-single {
+            background: none !important;
+        }
+
+        .chosen-choices,
+        .card .chosen-single,
+        .form-control {
+            background: transparent !important;
+            background-color: transparent !important;
+        }
+
+        /* Hide native selects until Select2 initializes */
+        select.chosenoptgroup, select.select2 {
+            visibility: hidden;
+        }
+
+        /* Show Select2 initialized elements */
+        .select2-container .chosenoptgroup, 
+        .select2-container .select2 {
+            visibility: visible;
+        }
+
+        .select2-container {
+            transition: opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .select2-container--open,
+        .select2-container--initialized {
+            opacity: 1;
+        }
+    </style>
+@endsection
+
+@section('content')
+    
+        <!-- content -->
+        <div class="container mt-5 ">
+            {{-- <div class="row mb-5">
+                <div class="col-5">
+                    <ul class="nav nav-tabs nav-adminux footer-tabs nav-fill" id="navtabscard30" role="tablist"
+                        style="font-size: 16px">
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link active translated_text" id="automatique-tab" data-bs-toggle="tab" href="#automatique"
+                                role="tab" aria-controls="automatique" aria-selected="true">Automatique</a>
+                        </li>
+                        <li class="nav-item translated_text" role="presentation">
+                            <a class="nav-link" id="manuel-tab" data-bs-toggle="tab" href="#manuel" role="tab"
+                                aria-controls="manuel" aria-selected="false">Manuel</a>
+                        </li>
+                    </ul>
+                </div>
+            </div> --}}
+            <div class="row">
+                {{-- <div class="tab-content py-3" id="myTabContent" style="background-color: #fff"> --}}
+                {{-- @include('profile.inc.createAuto') --}}
+                @include('profile.inc.RecommendationTemplate')
+                {{-- </div> --}}
+            </div>
+        </div>
+
+@endsection
+@section('js_footer')
+    <script type="text/javascript" src="{{ asset('assets/js/profile/listing.js') }}"></script>
+    <!-- JS Select2 -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var inputElm = document.querySelector('#techTags');
+            tagify = new Tagify(inputElm);
+        });
+    </script> --}}
+    <script>
+        const numberInputs = document.querySelectorAll(".custom-number-input");
+
+        numberInputs.forEach(input => {
+            input.addEventListener("input", (e) => {
+                let value = e.target.value.replace(/\s/g, ''); // remove spaces
+
+                if (!isNaN(value) && value !== '') {
+                    e.target.value = new Intl.NumberFormat('fr-FR').format(value);
+                } else {
+                    e.target.value = '';
+                }
+            });
+        });
+    </script>
+
+    <script>
+            'use strict';
+
+            let coverLetterEditor; 
+
+            $(window).on('load', function () {
+                ClassicEditor
+                    .create(document.querySelector('#cover_letter_ckeditor'), {
+                        language: 'fr',
+                        toolbar: {
+                            items: [
+                                'bold',
+                                'italic',
+                                'link',
+                                'undo',
+                                'redo',
+                                'bulletedList',
+                                'numberedList',
+                                'blockQuote'
+                            ]
+                        },
+                    })
+                    .then(editor => {
+                        coverLetterEditor = editor; 
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            });
+
+            function updateCKEditorAndSave(editorId, endpoint, id) {
+                if (coverLetterEditor) {
+                    document.querySelector('#' + editorId).value = coverLetterEditor.getData();
+                }
+
+                saveForm(endpoint, id);
+            }
+        </script>
+    {{-- <script>
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     const select1 = document.getElementById('has_driving_license');
+        //     const licenseTypeContainer = document.getElementById('license-type-container');
+
+        //     function toggleLicenseTypes() {
+        //         if (select1.value === 'true') {
+        //             licenseTypeContainer.style.display = 'block';
+        //             licenseTypeContainer.classList.remove('d-none');
+        //         } else {
+        //             licenseTypeContainer.style.display = 'none';
+        //             licenseTypeContainer.classList.add('d-none');
+        //             console.log('frff'); 
+        //         }
+        //     }
+        //     // Run on page load
+        //     toggleLicenseTypes();
+
+        //     // Listen to changes
+        //     select1.addEventListener('change', toggleLicenseTypes);
+        // });
+
+
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     const select = document.getElementById('has_driving_license');
+        //     const licenseTypeContainer = document.getElementById('license-type-container');
+
+        //     function toggleLicenseTypes() {
+        //         if (select.value === 'true') {
+        //             licenseTypeContainer.style.display = 'block';
+        //             licenseTypeContainer.classList.remove('d-none');
+        //         } else {
+        //             licenseTypeContainer.style.display = 'none';
+        //             licenseTypeContainer.classList.add('d-none');
+        //         }
+        //     }
+
+        //     toggleLicenseTypes();
+        //     select.addEventListener('change', toggleLicenseTypes);
+        // });
+    </script>
+    <script>
+        var ProfileListingRoute = "{{ route('profile.listing') }}";
+
+        const countries = @json($countries);
+        const cities = @json($cities);
+        const posts = @json($posts);
+        const levels = @json($levels);
+        const diplomas = @json($diplomas);
+        const evaluationTypes = @json($evaluationTypes);
+        const diplomaOptions = @json($diplomaOptions);
+        const mentions = @json(App\Enums\Profile\MentionEnum::getAll());
+        const langSkillLevels = @json(App\Enums\Skill\LanguageLevelEnum::getAll());
+        const LevelSkillEnum = @json(App\Enums\Skill\LevelSkillEnum::getAll());
+
+        $(document).ready(function() {
+            $('select').chosen({
+                width: '100%',
+                no_results_text: "Aucun résultat trouvé",
+                placeholder_text_single: "Sélectionnez un choix",
+            });
+
+            // if (document.querySelector('#cover_letter_ckeditor')) {
+            //     /* ck editor */
+            //     ClassicEditor
+            //         .create(document.querySelector('#cover_letter_ckeditor'), {
+            //             language: 'fr'
+            //         })
+            //         .catch(error => {
+            //             console.error(error);
+            //         });
+            // }
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+
+
+            function addImagesToChosen() {
+                $('.chosen-results li').each(function() {
+                    var $chosenOption = $(this);
+                    var index = $chosenOption.data('option-array-index');
+                    var imageSrc = $('.Flag_Country option').eq(index).data('image');
+
+                    if (imageSrc) {
+                        if (!$chosenOption.find('img').length) {
+                            $chosenOption.prepend('<img src="' + imageSrc + '" />');
+                            $('.chosen-results li img').width(30).css('margin-right', '10px');
+                        }
+                    }
+                });
+            }
+            $('.Flag_Country').on('chosen:showing_dropdown', addImagesToChosen);
+        });
+    </script> --}}
+
+    {{-- <script src="{{ asset('assets/js/profile/create-edit') }}"></script> --}}
+    <script>
+        apiUploadCv = "{{ route('profile.uploadCv') }}";
+        apiUploadCoverLetter = "{{ route('profile.uploadCoverLetter') }}";
+        apiUploadVideo = "{{ route('profile.uploadVideo') }}";
+        apiChangeProfileCover = "{{ route('profile.changeCover') }}";
+        apiChangeProfileAavatar = "{{ route('profile.changeAvatar') }}";
+        apiStoreGeneralInfo = "{{ route('profile.store.informations') }}";
+    </script>
+    @vite(['resources/js/profile/create-edit.js'])
+@endsection

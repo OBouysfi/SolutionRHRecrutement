@@ -1,0 +1,68 @@
+version: '3.3'
+
+volumes:
+  vendor:
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
+    container_name: humanjobs-recruitment-app
+    ports:
+      - "84:80"
+      - "6001:6001"
+
+    env_file:
+      - ./configs/xdebug.env
+    networks:
+      - laravel
+    volumes:
+      - ../src:/var/www/html:rw
+      - ./configs/laravel.env:/var/www/html/.env
+      - vendor:/var/www/html/vendor
+
+  mysql-db:
+    image: mysql:5.7.36
+    container_name: humanjobs-recruitment-mysql
+    restart: unless-stopped
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+      - ../src/tests/dump:/docker-entrypoint-initdb.d/
+    tty: true
+    ports:
+      - "3307:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    networks:
+      - laravel
+
+  redis:
+    image: "redis:alpine"
+    container_name: humanjobs-recruitment-redis
+    hostname: redis
+    ports:
+      - "6381:6379"
+    networks:
+      - laravel
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: humanjobs-recruitment-phpmyadmin
+    restart: always
+    depends_on:
+      - mysql-db
+    environment:
+      - PMA_HOST=humanjobs-recruitment-mysql
+      - PMA_PORT=3306
+      - PMA_ARBITRARY=1
+    volumes:
+      - ./configs/pma.ini:/usr/local/etc/php/conf.d/php.ini
+    ports:
+      - "8084:80"
+    networks:
+      - laravel
+
+networks:
+  laravel:
+    driver: bridge

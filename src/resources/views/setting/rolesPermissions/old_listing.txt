@@ -1,0 +1,251 @@
+<table class="table">
+    <tr style="border-top: 1px solid #e9e9e9;">
+        {{-- <td rowspan="2" style="width: 32px;"></td> --}}
+        {{-- <td rowspan="2" style="width: 315px;font-weight: 700;vertical-align: middle">Poste</td> --}}
+        <td rowspan="2" style="width: 384px;font-weight: 700;vertical-align: middle">Rôles</td>
+        <td colspan="2" style="font-weight: 700; padding-left: 5%; text-align: center;">Permissions</td>
+    </tr>
+    <tr>
+        <td style="width: 176px;font-weight: 700; text-align: center;">Actions</td>
+        <td style="font-weight: 700; text-align: center;">Tâches</td>
+    </tr>
+
+    @foreach($roleType->roles as $role)
+        <tr>
+            <td rowspan="{{ $role->permissions->count() > 0 ? $role->permissions->count() : 1 }}" style="vertical-align: middle; border-bottom: 4px solid #e9e9e9;">
+                {{ __($role->name) }}
+            </td>
+
+            @if($role->permissions->isNotEmpty())
+                @foreach($role->permissions as $index => $permission)
+                    @if($index > 0)
+                        <tr>
+                    @endif
+                        <td style="vertical-align: middle; padding-top: 18px; border-bottom: 4px solid #e9e9e9;">
+                            <button class="btn btn-theme mnw-100 bg-blue" style="float: left; font-size: 14px; width: 109.34px;">
+                                {{ __($permission->action) }}
+                            </button>
+                        </td>
+                        <td style="vertical-align: middle; padding-top: 18px; border-bottom: 4px solid #e9e9e9;">
+                            <ul style="list-style: circle; margin-bottom: 0">
+                                <li>
+                                    {{ __($permission->task) }}
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                @endforeach
+            @else
+                <td colspan="2" style="text-align: center; padding-top: 18px;">
+                    Aucune permission associée.
+                </td>
+            @endif
+        </tr>
+    @endforeach
+
+    {{-- @foreach($roleType->roles as $role)
+        <tr>
+            <td rowspan="3" style="vertical-align: middle;border-bottom: 4px solid #e9e9e9"><input type="checkbox"></td>
+            <td rowspan="3" style="vertical-align: middle;border-bottom: 4px solid #e9e9e9">{{ __($role->name) }}</td>
+            <td rowspan="3" style="vertical-align: middle;border-bottom: 4px solid #e9e9e9">{{ __($role->name) }}</td>
+            <td style="vertical-align: middle;padding-top: 18px;">
+                <button class="btn btn-theme mnw-100 bg-blue" style="float: left;font-size: 14px;width: 109.34px;">Ajouter</button>
+            </td>
+            <td style="vertical-align: middle;padding-top: 18px;">
+                <ul style="list-style: circle;margin-bottom: 0">
+                    <li>
+                        Ajouter un candidat dans la shortlist.
+                    </li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td style="vertical-align: middle;"><button class="btn btn-theme mnw-100 bg-blue" style="width: 109.34px;float: left;font-size: 14px;background-color: #8BA503 !important;">Ajuster</button></td>
+            <td style="vertical-align: middle;">
+                <ul style="list-style: circle;margin-bottom: 0">
+                    <li>
+                        Ajuster les offres d'emplois en fonction des besoins des clients.
+                    </li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td style="vertical-align: middle;border-bottom: 4px solid #e9e9e9;padding-bottom: 18px;"><button class="btn btn-danger mnw-100" style="float: left;font-size: 14px;width: 109.34px;">Planifier</button></td>
+            <td style="vertical-align: middle;border-bottom: 4px solid #e9e9e9;padding-bottom: 18px;">
+                <ul style="list-style: circle;margin-bottom: 0">
+                    <li>
+                        Planification des entretiens sur l'ATS.
+                    </li>
+                </ul>
+            </td>
+        </tr>
+    @endforeach --}}
+</table>
+
+----------------------------------------------------------------
+
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0"  >
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card border-0">
+                            <div class="card-body">
+                                <div class="row mb-4" style="padding: 6px 20px">
+                                    <div class="col-4" style="width: 30%;">
+                                        <h6 class="title custom-title">{{ __($roleType->name) }}</h6>
+                                    </div>
+                                </div>
+                                <div class="row" style="padding: 6px 20px">
+                                    <div class="col-12">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr style="border-top: 1px solid #e9e9e9;">
+                                                    <th rowspan="2" class="fw-bold text-center align-middle" style="width: 384px;">Rôles</th>
+                                                    <th colspan="4" class="fw-bold text-center">Permissions</th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="fw-bold text-center">Parent</th>
+                                                    <th class="fw-bold text-center" style="width: 176px;">Actions</th>
+                                                    <th class="fw-bold text-center">Tâches</th>
+                                                    <th class="fw-bold text-center">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($roleType->roles as $role)
+                                                    <tr>
+                                                        <td rowspan="{{ max($role->permissions->count(), 1) }}" class="align-middle border-bottom" style="border-bottom: 4px solid #e9e9e9;">
+                                                            {{ __($role->name) }}
+                                                        </td>
+
+                                                        @if($role->permissions->isNotEmpty())
+                                                            @foreach($role->permissions as $index => $permission)
+                                                                @if($index > 0)
+                                                                    <tr>
+                                                                @endif
+                                                                <td class="align-middle border-bottom" style="border-bottom: 4px solid #e9e9e9;">
+                                                                    {{ __($permission->parent) }}
+                                                                </td>
+
+                                                                <td class="align-middle border-bottom" style="border-bottom: 4px solid #e9e9e9;">
+                                                                    <button class="btn btn-theme w-100">
+                                                                        {{ __($permission->action) }}
+                                                                    </button>
+                                                                </td>
+                                                                <td class="align-middle border-bottom" style="border-bottom: 4px solid #e9e9e9;">
+                                                                    <ul class="mb-0">
+                                                                        <li>{{ __($permission->task) }}</li>
+                                                                    </ul>
+                                                                </td>
+                                                                <td class="align-middle border-bottom" style="border-bottom: 4px solid #e9e9e9;">
+                                                                    <button class="btn btn-danger   delete-permission"
+                                                                        data-role-id="{{ __($role->id) }}"
+                                                                        data-permission-id="{{ __($permission->id) }}"
+                                                                        data-tab-id="tR{{ $key }}">
+                                                                        <i class="bi bi-trash"></i>
+                                                                    </button>
+                                                                </td>
+                                                                </tr>
+                                                            @endforeach
+                                                        @else
+                                                            <td colspan="4" class="text-center align-middle border-bottom" style="border-bottom: 4px solid #e9e9e9;">
+                                                                Aucune permission associée.
+                                                            </td>
+                                                        @endif
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+-------------------------------------------------------------------------
+{{-- <div class="row" style="padding: 6px 20px">
+                                                                    <div class="col-12">
+                                                                        <table class="table">
+                                                                            <thead>
+                                                                                <tr style="border-top: 1px solid #e9e9e9;">
+                                                                                    <th rowspan="2"
+                                                                                        style="width: 315px; font-weight: 700; vertical-align: middle; text-align: center;">
+                                                                                        Poste</th>
+                                                                                    <th rowspan="2"
+                                                                                        style="width: 384px; font-weight: 700; vertical-align: middle; text-align: center;">
+                                                                                        Rôles</th>
+                                                                                    <th colspan="3"
+                                                                                        style="font-weight: 700; padding-left: 5%; text-align: center;">
+                                                                                        Permissions</th>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <th
+                                                                                        style="width: 176px; font-weight: 700; text-align: center;">
+                                                                                        Modules</th>
+                                                                                    <th
+                                                                                        style="width: 176px; font-weight: 700; text-align: center;">
+                                                                                        Actions</th>
+                                                                                    <th
+                                                                                        style="font-weight: 700; text-align: center;">
+                                                                                        Tâches</th>
+                                                                                    <th class="fw-bold text-center">
+                                                                                        Supprimer
+                                                                                    </th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                @foreach ($roleType->roles as $role)
+                                                                                    <tr>
+                                                                                        <td rowspan="{{ count($role->permissions) + 1 }}"
+                                                                                            style="text-align: center; padding-top: 18px; border-bottom: 4px solid #e9e9e9;">
+                                                                                            {{ __($roleType->name) }}
+                                                                                        </td>
+                                                                                        <td rowspan="{{ count($role->permissions) + 1 }}"
+                                                                                            style="text-align: center; padding-top: 18px; border-bottom: 4px solid #e9e9e9;">
+                                                                                            {{ __($role->name) }}
+                                                                                        </td>
+                                                                                    </tr>
+
+                                                                                    @foreach ($role->permissions as $permission)
+                                                                                        <tr>
+                                                                                            <td style="text-align: center; vertical-align: middle; padding-top: 18px;">
+                                                                                                {{ __($permission->parent) }}
+                                                                                            </td>
+                                                                                            <td style="text-align: center; vertical-align: middle; padding-top: 18px;">
+                                                                                                <button
+                                                                                                    class="btn btn-theme mnw-100"
+                                                                                                    style="text-align: center; font-size: 14px; width: 109.34px; background-color: {{ App\Enums\RolePermission\ActionColorEnum::getColor($permission->action) }};">
+                                                                                                    {{ __($permission->action) }}
+                                                                                                </button>
+                                                                                            </td>
+                                                                                            <td
+                                                                                                style="text-align: center; vertical-align: middle; padding-top: 18px;">
+                                                                                                <ul
+                                                                                                    style="list-style: circle; margin-bottom: 0;">
+                                                                                                    <li>{{ __($permission->task) }}
+                                                                                                    </li>
+                                                                                                </ul>
+                                                                                            </td>
+                                                                                            <td class="align-middle border-bottom"
+                                                                                                style="text-align: center; border-bottom: 4px solid #e9e9e9;">
+                                                                                                <button
+                                                                                                    class="btn btn-theme   delete-permission"
+                                                                                                    data-role-id="{{ __($role->id) }}"
+                                                                                                    data-permission-id="{{ __($permission->id) }}"
+                                                                                                    data-tab-id="tR{{ $key }}">
+                                                                                                    <i
+                                                                                                        class="bi bi-trash"></i>
+                                                                                                </button>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    @endforeach
+                                                                                @endforeach
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div> --}}

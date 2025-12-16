@@ -1,0 +1,37 @@
+<script>
+    window.translations = {
+        error_text: "{{ __('generated.Veuillez sélectionner au moins un profil.') }}",
+        error: "{{ __('generated.Erreur') }}",
+        confirmation: "{{ __('generated.Confirmation') }}",
+        update_status: "{{ __('generated.Êtes-vous sûr de vouloir mettre à jour le statut ?') }}",
+        yes: "{{ __('generated.Oui') }}",
+        cancel: "{{ __('generated.Annuler') }}",
+        statut_succes: "{{ __('generated.Le statut a été mis à jour avec succès.') }}",
+        OKconfirm: "{{ __('generated.OK') }}",
+        success_ats: "{{ __('generated.Succès') }}",
+        // success_ats: "{{ __('generated.Succès') }}",
+
+        confirmer_abandon: "{{ __('generated.Confirmer l\'abandon de candidature') }}",
+        action_irreversible: "{{ __('generated.Cette action est irréversible.') }}",
+        confirm_abandonner: "{{ __('generated.Oui, abandonner') }}",
+
+        restaurer_candidature: "{{ __('generated.Restaurer la candidature') }}",
+        text_restaurer_candidature: "{{ __('generated.Voulez-vous vraiment restaurer cette candidature ?') }}",
+        confirm_restaurer_candidature: "{{ __('generated.Oui, restaurer') }}",
+        valider: "{{ __('generated.Valider') }}",
+        motif_refus: "{{ __('generated.Motif de refus') }}",
+        text_succes_candidature_restaurée: "{{ __('generated.Candidature restaurée avec succès.') }}",
+        form_saved: "{{ __('generated.Le formulaire a été sauvegardé avec succès.') }}",
+        type_fichier: "{{ __('generated.Quel type de fichier souhaitez-vous ?') }}",
+        excel: "{{ __('generated.Excel') }}",
+        Deja_en_ATS: "{{ __('generated.Déjà en ATS') }}",
+        text_Deja_en_ATS: "{{ __('generated.Ce profil est déjà dans l\'ATS. Le toggle est activé automatiquement.') }}",
+        ajouter_a_shortlist: "{{ __('generated.Ajouter à la shortlist ?') }}",
+        deja_present: "{{ __('generated.Déjà présent') }}",
+        suppression_non_activee: "{{ __('generated.Suppression non activée') }}",
+        toggle_a_lajout: "{{ __('generated.Ce toggle sert uniquement à l’ajout.') }}",
+        exporter_en_excel: "{{ __('generated.Exporter en Excel') }}",
+        succes_offre_emploi: "{{ __('generated.Offre emploi ajoutée avec succès!') }}",
+        succes_offre_emploi_update: "{{ __('generated.Offre emploi ajoutée avec succès!') }}",
+    };
+</script>

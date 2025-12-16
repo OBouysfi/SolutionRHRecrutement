@@ -1,0 +1,21 @@
+{
+    "private": true,
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build"
+    },
+    "devDependencies": {
+        "axios": "^1.11.0",
+        "laravel-echo": "^1.19.0",
+        "laravel-vite-plugin": "^2.0.0",
+        "pusher-js": "^7.6.0",
+        "sass": "^1.89.2",
+        "vite": "^7.0.6"
+    },
+    "dependencies": {
+        "@soketi/soketi": "^1.6.1",
+        "bootstrap": "^5.3.6",
+        "datatables.net": "^2.2.1",
+        "datatables.net-bs5": "^2.2.1"
+    }
+}
