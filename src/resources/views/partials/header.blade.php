@@ -773,28 +773,27 @@
                                 <button id="theme-toggle" class="btn btn-square btn-link text-center d-none d-lg-inline-block">
                                     <i id="theme-icon" class="bi bi-sun-fill"></i>
                                 </button>
-                        <button type="button" class="btn btn-square btn-link text-center d-none d-lg-inline-block"
-                            id="gofullscreen" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                            title="Fullscreen"><i class="bi bi-fullscreen"></i></button>
-                        <button type="button" class="btn btn-square btn-link text-center d-none d-sm-inline-block"
-                            id="showChat" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                            title="Chat & Support">
-                            <span class="bi bi-chat-right-dots position-r+elative">
-                                <span
-                                    class="badge position-absolute top-0 start-100 translate-middle bg-theme textw-white rounded">
-                                    {{-- <span class="fs-10">9+</span> <span class="visually-hidden">New alerts</span> --}}
-                                </span>
-                            </span>
-                        </button>
-                        {{-- <button type="button" class="btn btn-square btn-link text-center" id="showNotification"
-                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="Notifications">
-                            <span class="bi bi-bell position-relative">
-                                <span
-                                    class="position-absolute top-0 start-100 p-1 bg-danger border border-light rounded-circle">
-                                    <span class="visually-hidden">New alerts</span>
-                                </span>
-                            </span>
-                        </button> --}}
+                                <button type="button" class="btn btn-square btn-link text-center d-none d-lg-inline-block"
+                                    id="gofullscreen" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                    title="Fullscreen"><i class="bi bi-fullscreen"></i></button>
+                                {{-- <button type="button" class="btn btn-square btn-link text-center d-none d-sm-inline-block"
+                                    id="showChat" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                    title="Chat & Support">
+                                    <span class="bi bi-chat-right-dots position-r+elative">
+                                        <span
+                                            class="badge position-absolute top-0 start-100 translate-middle bg-theme textw-white rounded">
+                                        </span>
+                                    </span>
+                                </button> --}}
+                                {{-- <button type="button" class="btn btn-square btn-link text-center" id="showNotification"
+                                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Notifications">
+                                    <span class="bi bi-bell position-relative">
+                                        <span
+                                            class="position-absolute top-0 start-100 p-1 bg-danger border border-light rounded-circle">
+                                            <span class="visually-hidden">New alerts</span>
+                                        </span>
+                                    </span>
+                                </button> --}}
                     </div>
                     <div class="col-auto align-self-center px-0  d-none d-xxxl-block">
                         <i class="bi bi-three-dots-vertical opacity-3 text-secondary"
