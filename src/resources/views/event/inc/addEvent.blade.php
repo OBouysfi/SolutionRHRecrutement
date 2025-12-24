@@ -227,13 +227,13 @@
                                 <div class="col-auto">
                                     <span id="meet-result">{{ __("generated.url_manuel") }}</span>
                                 </div>
-                                <div class="col-auto ms-auto">
+                                <!-- <div class="col-auto ms-auto">
                                     <div class="dropdown d-inline-block">
                                         <a class="text-secondary dd-arrow-none" data-bs-toggle="dropdown"
                                             aria-expanded="false" data-bs-display="static" role="button">
                                             <i class="bi bi-chevron-down"></i>
-                                        </a>
-                                        <ul class="dropdown-menu dropdown-menu-end">
+                                        </a> -->
+                                        <!-- <ul class="dropdown-menu dropdown-menu-end">
                                             <li><a class="dropdown-item meet-action" href="javascript:void(0)"
                                                     id="Manuel-url">{{ __("generated.url_manuel") }} </a></li>
                                             <li><a class="dropdown-item meet-action" href="javascript:void(0)"
@@ -242,9 +242,9 @@
                                                     id="Teams-url">{{ __("generated.microsoft_teams") }}</a></li>
                                             <li><a class="dropdown-item meet-action" href="javascript:void(0)"
                                                     id="Zoom-url"> {{ __("generated.zoom") }}</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
+                                        </ul> -->
+                                    <!-- </div>
+                                </div> -->
                             </div>
                         </div>
                         <div class="col-auto to-change-meet mt-3" style="width: 44.5%;">

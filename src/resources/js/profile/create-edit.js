@@ -1,4 +1,82 @@
 'use strict'
+
+const ProfileValidationHelpers = {
+    validateWeight: function(value) {
+        const numValue = parseFloat(value);
+        return !isNaN(numValue) && numValue >= 0 && numValue <= 100 ? numValue : 0;
+    },
+
+    validateNumericInput: function(value, min = null, max = null) {
+        const numValue = parseFloat(value);
+        if (isNaN(numValue)) return null;
+        if (min !== null && numValue < min) return min;
+        if (max !== null && numValue > max) return max;
+        return numValue;
+    },
+
+    sanitizeFormData: function(formData) {
+        const sanitized = {};
+        for (let [key, value] of formData.entries()) {
+            if (value !== null && value !== undefined && value !== '') {
+                sanitized[key] = value;
+            }
+        }
+        return sanitized;
+    },
+
+    validateSalaryFields: function(minSalary, maxSalary) {
+        const min = parseFloat(minSalary);
+        const max = parseFloat(maxSalary);
+        
+        if (isNaN(min) || isNaN(max)) {
+            return {
+                valid: false,
+                error: 'Les salaires doivent être des nombres valides'
+            };
+        }
+
+        if (min < 0 || max < 0) {
+            return {
+                valid: false,
+                error: 'Les salaires ne peuvent pas être négatifs'
+            };
+        }
+
+        if (max < min) {
+            return {
+                valid: false,
+                error: 'Le salaire maximum doit être supérieur ou égal au salaire minimum'
+            };
+        }
+
+        return { valid: true };
+    },
+
+    showFieldError: function(fieldName, message) {
+        const field = document.querySelector(`[name="${fieldName}"]`);
+        if (field) {
+            field.classList.add('is-invalid');
+            let errorDiv = field.parentElement.querySelector('.invalid-feedback');
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.className = 'invalid-feedback';
+                field.parentElement.appendChild(errorDiv);
+            }
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+    },
+
+    clearFieldErrors: function() {
+        document.querySelectorAll('.is-invalid').forEach(field => {
+            field.classList.remove('is-invalid');
+        });
+        document.querySelectorAll('.invalid-feedback').forEach(error => {
+            error.style.display = 'none';
+        });
+    }
+};
+
 $(window).on('load', function () {
 
     $.ajaxSetup({
@@ -2353,45 +2431,80 @@ function deleteExperience(index) {
 }
 
 window.saveAttentes = function () {
+    ProfileValidationHelpers.clearFieldErrors();
     const formData = new FormData();
 
     try {
-        // const selectedLicenses = Array.from(document.querySelectorAll('input[name="license_types[]"]:checked'))
-        //     .map(checkbox => checkbox.value);
-        // const select = document.querySelector('select[name="license_types[]"]');
-        // const selectedLicenses = Array.from(select.selectedOptions).map(option => option.value);
-        formData.append('profession_id', document.querySelector('select[name="desired_profession_id"]').value || '');
-        formData.append('contract_type', document.querySelector('select[name="contract_type"]').value || '');
-        formData.append('activity_area_id', document.querySelector('select[name="activity_area_id"]').value || '');
-        formData.append('max_expected_salary', document.querySelector('input[name="max_expected_salary"]').value || null);
-        formData.append('min_expected_salary', document.querySelector('input[name="min_expected_salary"]').value || null);
-        formData.append('categorie_socio_professionnelle', document.querySelector('select[name="categorie_socio_professionnelle"]').value || '');
-        formData.append('company_size', document.querySelector('select[name="company_size"]').value || '');
-        formData.append('has_driving_license', document.querySelector('select[name="has_driving_license"]').value || '');
-        // formData.append('license_types[]', document.querySelector('select[name="license_types[]"]').value || '');
-        // selectedLicenses.forEach(license => {
-        //     formData.append('license_types[]', license);
-        // });
+        const minSalary = document.querySelector('input[name="min_expected_salary"]')?.value || '';
+        const maxSalary = document.querySelector('input[name="max_expected_salary"]')?.value || '';
+
+        const salaryValidation = ProfileValidationHelpers.validateSalaryFields(minSalary, maxSalary);
+        if (!salaryValidation.valid) {
+            Swal.fire({
+                confirmButtonText: window.translations.confirm || 'OK',
+                icon: 'error',
+                title: window.translations.validation_error || 'Erreur de validation',
+                text: salaryValidation.error,
+            });
+            return;
+        }
+
+        formData.append('profession_id', document.querySelector('select[name="desired_profession_id"]')?.value || '');
+        formData.append('contract_type', document.querySelector('select[name="contract_type"]')?.value || '');
+        formData.append('activity_area_id', document.querySelector('select[name="activity_area_id"]')?.value || '');
+        formData.append('max_expected_salary', maxSalary);
+        formData.append('min_expected_salary', minSalary);
+        formData.append('categorie_socio_professionnelle', document.querySelector('select[name="categorie_socio_professionnelle"]')?.value || '');
+        formData.append('company_size', document.querySelector('select[name="company_size"]')?.value || '');
+        formData.append('has_driving_license', document.querySelector('select[name="has_driving_license"]')?.value || 'false');
 
         const select = document.querySelector('select[name="license_types[]"]');
-        const selectedLicenses = Array.from(select.selectedOptions).map(option => option.value);
-        selectedLicenses.forEach(value => {
-            formData.append('license_types[]', value);
-        });
+        if (select) {
+            const selectedLicenses = Array.from(select.selectedOptions).map(option => option.value);
+            if (selectedLicenses.length > 0) {
+                selectedLicenses.forEach(value => {
+                    formData.append('license_types[]', value);
+                });
+            }
+        }
 
         document.querySelectorAll('input[name^="mobility"]').forEach(input => {
-            const [type, field] = input.name.match(/\[(.*?)\]/g).map(name => name.replace(/\[|\]/g, ''));
-            formData.append(`mobility[${type}][${field}]`, input.type === 'checkbox' ? input.checked : input.value || '');
+            const matches = input.name.match(/\[(.*?)\]/g);
+            if (matches && matches.length >= 2) {
+                const [type, field] = matches.map(name => name.replace(/\[|\]/g, ''));
+                if (input.type === 'checkbox') {
+                    formData.append(`mobility[${type}][${field}]`, input.checked ? '1' : '0');
+                } else {
+                    const value = ProfileValidationHelpers.validateWeight(input.value);
+                    formData.append(`mobility[${type}][${field}]`, value);
+                }
+            }
         });
 
         document.querySelectorAll('input[name^="work_mode"]').forEach(input => {
-            const [type, field] = input.name.match(/\[(.*?)\]/g).map(name => name.replace(/\[|\]/g, ''));
-            formData.append(`work_mode[${type}][${field}]`, input.type === 'checkbox' ? input.checked : input.value || '');
+            const matches = input.name.match(/\[(.*?)\]/g);
+            if (matches && matches.length >= 2) {
+                const [type, field] = matches.map(name => name.replace(/\[|\]/g, ''));
+                if (input.type === 'checkbox') {
+                    formData.append(`work_mode[${type}][${field}]`, input.checked ? '1' : '0');
+                } else {
+                    const value = ProfileValidationHelpers.validateWeight(input.value);
+                    formData.append(`work_mode[${type}][${field}]`, value);
+                }
+            }
         });
 
         document.querySelectorAll('input[name^="work_time"]').forEach(input => {
-            const [type, field] = input.name.match(/\[(.*?)\]/g).map(name => name.replace(/\[|\]/g, ''));
-            formData.append(`work_time[${type}][${field}]`, input.type === 'checkbox' ? input.checked : input.value || '');
+            const matches = input.name.match(/\[(.*?)\]/g);
+            if (matches && matches.length >= 2) {
+                const [type, field] = matches.map(name => name.replace(/\[|\]/g, ''));
+                if (input.type === 'checkbox') {
+                    formData.append(`work_time[${type}][${field}]`, input.checked ? '1' : '0');
+                } else {
+                    const value = ProfileValidationHelpers.validateWeight(input.value);
+                    formData.append(`work_time[${type}][${field}]`, value);
+                }
+            }
         });
 
         const availabilityTypeElement = document.querySelector('input[name="availability[type]"]:checked');
@@ -2401,11 +2514,22 @@ window.saveAttentes = function () {
 
             if (availabilityType === 'notice') {
                 const noticeDuration = document.querySelector('select[name="availability[notice_duration]"]');
-                if (noticeDuration) {
-                    formData.append('availability[notice_duration]', noticeDuration.value || '');
+                if (noticeDuration && noticeDuration.value) {
+                    formData.append('availability[notice_duration]', noticeDuration.value);
                 }
             }
+        } else {
+            formData.append('availability[type]', 'immediate');
         }
+
+        Swal.fire({
+            title: window.translations.please_wait || 'Chargement...',
+            text: window.translations.saving_data || 'Sauvegarde en cours...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
 
         $.ajax({
             url: `/api/profiles/store/attentes`,
@@ -2414,48 +2538,49 @@ window.saveAttentes = function () {
             contentType: false,
             processData: false,
             success: function (response) {
-                // console.log("==============================");
-                // console.log(response);
+                Swal.close();
                 if (response.error) {
                     Swal.fire({
-                        confirmButtonText: window.translations.confirm,
+                        confirmButtonText: window.translations.confirm || 'OK',
                         icon: 'error',
-                        title: window.translations.validation_error,
+                        title: window.translations.validation_error || 'Erreur de validation',
                         html: response.error,
                     });
                 } else {
                     Swal.fire({
-                        confirmButtonText: window.translations.confirm,
+                        confirmButtonText: window.translations.confirm || 'OK',
                         icon: 'success',
-                        title: window.translations.success,
-                        text: window.translations.form_saved,
+                        title: window.translations.success || 'Succès',
+                        text: window.translations.form_saved || 'Formulaire enregistré avec succès',
+                    }).then(() => {
+                        window.location.href = ProfileListingRoute;
                     });
-                    window.location.href = ProfileListingRoute;
                 }
             },
             error: function (xhr) {
+                Swal.close();
                 if (xhr.status === 422) {
                     const errors = xhr.responseJSON.errors;
-                    let errorMessages = '';
+                    let errorMessages = '<ul style="text-align: left;">';
                     for (let field in errors) {
                         if (errors.hasOwnProperty(field)) {
-                            errorMessages += `- ${errors[field].join(', ')} `;
+                            errorMessages += `<li><strong>${field}:</strong> ${errors[field].join(', ')}</li>`;
                         }
                     }
+                    errorMessages += '</ul>';
                     Swal.fire({
-                        confirmButtonText: window.translations.confirm,
+                        confirmButtonText: window.translations.confirm || 'OK',
                         icon: 'error',
-                        title: window.translations.validation_error,
+                        title: window.translations.validation_error || 'Erreur de validation',
                         html: errorMessages,
                     });
                 } else {
-                    // Other errors
                     const errorResponse = xhr.responseJSON || {};
                     Swal.fire({
-                        confirmButtonText: window.translations.confirm,
+                        confirmButtonText: window.translations.confirm || 'OK',
                         icon: 'error',
-                        title: window.translations.error,
-                        text: errorResponse.error || window.translations.error,
+                        title: window.translations.error || 'Erreur',
+                        text: errorResponse.error || errorResponse.message || window.translations.error || 'Une erreur est survenue',
                     });
                 }
             },
@@ -2463,7 +2588,7 @@ window.saveAttentes = function () {
     } catch (error) {
         console.error('Error while preparing form data:', error);
         Swal.fire({
-            confirmButtonText: window.translations.confirm,
+            confirmButtonText: window.translations.confirm || 'OK',
             icon: 'error',
             title: 'Erreur',
             text: 'Impossible de sauvegarder les données. Veuillez vérifier le formulaire.',
@@ -2863,7 +2988,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 $(document).ready(function () {
     const $select1 = $('#has_driving_license');
-    const $licenseTypeContainer = $('#license-type-container');
+    const $licenseTypeContainer = $('.license-type-container');
 
     function toggleLicenseTypes() {
         if ($select1.val() === 'true') {
@@ -2873,8 +2998,31 @@ $(document).ready(function () {
         }
     }
 
-    // Exécuter au chargement de la page
-    // toggleLicenseTypes();
+    $select1.on('change', toggleLicenseTypes);
+    toggleLicenseTypes();
+
+    document.querySelectorAll('input[name^="mobility"][type="text"], input[name^="work_mode"][type="text"], input[name^="work_time"][type="text"]').forEach(input => {
+        input.addEventListener('input', function() {
+            let value = parseFloat(this.value);
+            if (isNaN(value) || value < 0) {
+                this.value = 0;
+            } else if (value > 100) {
+                this.value = 100;
+            }
+        });
+
+        input.addEventListener('blur', function() {
+            if (this.value === '' || isNaN(parseFloat(this.value))) {
+                this.value = 0;
+            }
+        });
+    });
+
+    document.querySelectorAll('.custom-number-input').forEach(input => {
+        input.addEventListener('input', function() {
+            this.value = this.value.replace(/[^\d.,]/g, '');
+        });
+    });
 
     // Écouter les changements
     $select1.on('change', toggleLicenseTypes);

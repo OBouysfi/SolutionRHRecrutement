@@ -39,7 +39,7 @@ class JobOfferController extends Controller
         $this->jobOffer = $jobOffer;
 
         // Appliquer un middleware pour restreindre l'accès selon la permission
-        $this->middleware('permission:mission-listing')->only(['index']);
+        $this->middleware('permission:mission-listing')->only(['index', 'mainListing']);
         $this->middleware('permission:mission-create-offer')->only(['storeJobOffer']);
         $this->middleware('permission:mission-edit')->only(['updateJobOffer']);
         $this->middleware('permission:mission-delete')->only(['destroy']);
@@ -254,6 +254,195 @@ class JobOfferController extends Controller
             'data' => JobOfferResource::collection(
                 $jobOffers
             ),
+        ]);
+    }
+
+    /**
+     * Main listing method for job offers with manual pagination
+     * Similar to profile listing functionality
+     */
+    public function mainListing(Request $request)
+    {
+        $perPage = $request->get('perPage', 10);
+        $page = $request->get('page', 1);
+
+        // Build query with relationships
+        $query = JobOffer::with(['client', 'city.country', 'diplomas', 'jobOfferExperience', 'trackingApplications']);
+
+        // Apply filters
+        if ($request->has('start_date') && !empty($request->start_date)) {
+            $query->whereDate('created_at', '>=', $request->start_date);
+        }
+        if ($request->has('end_date') && !empty($request->end_date)) {
+            $query->whereDate('created_at', '<=', $request->end_date);
+        }
+        if ($request->has('pays') && $request->pays !== 'Tous') {
+            $query->whereHas('city.country', function ($q) use ($request) {
+                $q->where('countries.id', $request->pays);
+            });
+        }
+        if ($request->has('ville') && $request->ville !== 'Tous') {
+            $query->where('city_id', $request->ville);
+        }
+        if ($request->has('client') && $request->client !== 'Tous') {
+            $query->where('client_id', $request->client);
+        }
+        if ($request->has('diploma') && $request->diploma !== 'Tous') {
+            $query->whereHas('diplomas', function ($q) use ($request) {
+                $q->where('diploma_id', $request->diploma);
+            });
+        }
+        if ($request->has('status_id') && $request->status_id !== 'Tous') {
+            $query->where('status_id', $request->status_id);
+        }
+
+        // Get total count before pagination
+        $totalCount = $query->count();
+
+        // Apply pagination
+        $jobOffers = $query->latest()->paginate($perPage, ['*'], 'page', $page);
+
+        // Format data for response
+        $formattedData = [];
+        foreach ($jobOffers->items() as $jobOffer) {
+            // Logo
+            $logo = '-';
+            if ($jobOffer->client && $jobOffer->client->getLogoUrl()) {
+                $logoUrl = $jobOffer->client->getLogoUrl();
+                $logo = '<img src="' . htmlspecialchars($logoUrl) . '" alt="Logo" width="40" style="max-width:none;">';
+            }
+
+            // Client number
+            $clientNumber = $jobOffer->client->id ?? '-';
+
+            // Client name
+            $clientName = $jobOffer->client->name ?? '-';
+
+            // Title
+            $title = __($jobOffer->title) ?? '-';
+
+            // Contract type
+            $contractType = ContractTypeProfileEnum::getAbbrValue($jobOffer->contract_type_id) ?? '-';
+
+            // City
+            $cityName = $jobOffer->city ? __($jobOffer->city->name) : '-';
+
+            // Diplomas
+            $diplomaLabel = '-';
+            if ($jobOffer->diplomas->isNotEmpty()) {
+                $diplomaLabel = $jobOffer->diplomas->map(function ($diploma) {
+                    return __($diploma->label) ?? '-';
+                })->implode('<br>');
+            }
+
+            // Experience
+            $experienceCount = $jobOffer->jobOfferExperience->sum('years') . ' ' . __('generated.ans');
+
+            // Number of profiles
+            $nbrProfiles = $jobOffer->nbr_profiles ?? '-';
+
+            // Start date
+            $startDate = $jobOffer->mission_started_at
+                ? $jobOffer->mission_started_at->format('d/m/Y')
+                : '-';
+
+            // End date
+            $endDate = $jobOffer->mission_finished_at
+                ? $jobOffer->mission_finished_at->format('d/m/Y')
+                : '-';
+
+            // Status
+            $statusBadge = '-';
+            if (!is_null($jobOffer->status_id)) {
+                $statusName = StatusJobOfferEnum::getStatusNameValue($jobOffer->status_id);
+                $statusColors = [
+                    StatusJobOfferEnum::DRAFT => 'badge-draft',
+                    StatusJobOfferEnum::NOT_STARTED => 'badge-not-started',
+                    StatusJobOfferEnum::IN_PROGRESS => 'badge-in-progress',
+                    StatusJobOfferEnum::CLOSED => 'badge-closed',
+                    StatusJobOfferEnum::SUSPENDED => 'badge-suspended',
+                    StatusJobOfferEnum::REOPENED => 'badge-reopened',
+                    StatusJobOfferEnum::CANCELLED => 'badge-cancelled',
+                    StatusJobOfferEnum::REACTIVATED => 'badge-reactivated',
+                ];
+                $badgeColor = $statusColors[$jobOffer->status_id] ?? 'badge-custom-color';
+                $statusBadge = '<span class="badge badge-sm ' . $badgeColor . '">' . $statusName . '</span>';
+            }
+
+            // Actions dropdown
+            $disabledItems = JobOffer::DISABLED_STATUS_MAPPING[$jobOffer->status_id] ?? [];
+            $isEditDisabled = in_array($jobOffer->status_id, JobOffer::DISABLED_CRUD_MAPPING['edit']);
+
+            $actions = '<div class="dropdown text-center">
+                            <a class="text-secondary" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots" style="font-size: 19px;"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">';
+
+            if (auth()->user()->can('mission-detail')) {
+                $actions .= '<li><a class="dropdown-item" href="' . route('jobOffer.show', $jobOffer->id) . '">' . __("generated.Détail") . '</a></li>';
+            }
+
+            if (auth()->user()->can('mission-edit')) {
+                $actions .= '<li><a class="dropdown-item ' . ($isEditDisabled ? 'disabled text-muted' : '') . '" href="' . route('jobOffer.edit', $jobOffer->id) . '">' . __("generated.Éditer") . '</a></li>';
+            }
+
+            if (auth()->user()->can('mission-delete')) {
+                $actions .= '<li>
+                                <form id="delete-form-' . $jobOffer->id . '" action="' . route('delete_jobOffer.destroy', $jobOffer->id) . '" method="POST" style="display: none;">
+                                    ' . csrf_field() . method_field('DELETE') . '
+                                </form>
+                                <a class="dropdown-item text-danger" href="javascript:void(0);" onclick="confirmDelete(' . $jobOffer->id . ')">' . __("generated.Supprimer") . '</a>
+                            </li>';
+            }
+
+            if (auth()->user()->can('mission-status-annuler')) {
+                $actions .= '<li><a class="dropdown-item ' . (in_array(StatusJobOfferEnum::CANCELLED, $disabledItems) ? 'disabled text-muted' : '') . '" href="javascript:void(0);" onclick="openStatusChangeModal(' . $jobOffer->id . ', ' . StatusJobOfferEnum::CANCELLED . ')">' . StatusJobOfferEnum::getAll()[StatusJobOfferEnum::CANCELLED] . '</a></li>';
+            }
+
+            if (auth()->user()->can('mission-status-suspendre')) {
+                $actions .= '<li><a class="dropdown-item ' . (in_array(StatusJobOfferEnum::SUSPENDED, $disabledItems) ? 'disabled text-muted' : '') . '" href="javascript:void(0);" onclick="openStatusChangeModal(' . $jobOffer->id . ', ' . StatusJobOfferEnum::SUSPENDED . ')">' . StatusJobOfferEnum::getAll()[StatusJobOfferEnum::SUSPENDED] . '</a></li>';
+            }
+
+            if (auth()->user()->can('mission-status-cloturer')) {
+                $actions .= '<li><a class="dropdown-item ' . (in_array(StatusJobOfferEnum::CLOSED, $disabledItems) ? 'disabled text-muted' : '') . '" href="javascript:void(0);" onclick="openStatusChangeModal(' . $jobOffer->id . ', ' . StatusJobOfferEnum::CLOSED . ')">' . StatusJobOfferEnum::getAll()[StatusJobOfferEnum::CLOSED] . '</a></li>';
+            }
+
+            if (auth()->user()->can('mission-status-reactiver')) {
+                $actions .= '<li><a class="dropdown-item ' . (in_array(StatusJobOfferEnum::REACTIVATED, $disabledItems) ? 'disabled text-muted' : '') . '" href="javascript:void(0);" onclick="openStatusChangeModal(' . $jobOffer->id . ', ' . StatusJobOfferEnum::REACTIVATED . ')">' . StatusJobOfferEnum::getAll()[StatusJobOfferEnum::REACTIVATED] . '</a></li>';
+            }
+
+            if (auth()->user()->can('mission-status-recouvrir')) {
+                $actions .= '<li><a class="dropdown-item text-dark ' . (in_array(StatusJobOfferEnum::REOPENED, $disabledItems) ? 'disabled text-muted' : '') . '" href="javascript:void(0);" onclick="openStatusChangeModal(' . $jobOffer->id . ', ' . StatusJobOfferEnum::REOPENED . ')">' . StatusJobOfferEnum::getAll()[StatusJobOfferEnum::REOPENED] . '</a></li>';
+            }
+
+            $actions .= '</ul></div>';
+
+            $formattedData[] = [
+                'logo' => $logo,
+                'client_number' => $clientNumber,
+                'client_name' => $clientName,
+                'title' => $title,
+                'contract_type' => $contractType,
+                'city_name' => $cityName,
+                'diploma_label' => $diplomaLabel,
+                'experience_count' => $experienceCount,
+                'nbr_profiles' => $nbrProfiles,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'status' => $statusBadge,
+                'action' => $actions,
+            ];
+        }
+
+        return response()->json([
+            'recordsTotal' => $totalCount,
+            'recordsFiltered' => $totalCount,
+            'data' => $formattedData,
+            'current_page' => $jobOffers->currentPage(),
+            'last_page' => $jobOffers->lastPage(),
+            'per_page' => $jobOffers->perPage(),
+            'total' => $jobOffers->total(),
         ]);
     }
 

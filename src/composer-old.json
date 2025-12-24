@@ -16,6 +16,7 @@
         "laravel/socialite": "^5.18",
         "laravel/tinker": "^2.8",
         "maatwebsite/excel": "^3.1",
+        "macsidigital/laravel-zoom": "^8.0",
         "mcamara/laravel-localization": "^2.3",
         "microsoft/microsoft-graph": "^2.28",
         "pusher/pusher-php-server": "^7.2",

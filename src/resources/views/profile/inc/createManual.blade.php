@@ -1,11 +1,11 @@
 {{-- <div class="tab-pane fade show active" id="manuel" role="tabpanel" aria-labelledby="manuel-tab">
     <div class="row"> --}}
 <ul class="nav nav-tabs justify-content-center nav-adminux nav-lg" id="myTab" role="tablist">
-    <li class="nav-item" role="presentation">
+    <!-- <li class="nav-item" role="presentation">
         <button style="font-size: 14px" class="nav-link " id="sub-personal0-tab" data-bs-toggle="tab"
             data-bs-target="#sub-personal0" type="button" role="tab" aria-controls="sub-personal"
             aria-selected="true">{{ __("generated.Parcing") }}</button>
-    </li>
+    </li> -->
     <li class="nav-item" role="presentation">
         <button style="font-size: 14px" class="nav-link active" id="sub-personal1-tab" data-bs-toggle="tab"
             data-bs-target="#sub-personal1" type="button" role="tab" aria-controls="sub-personal"
@@ -135,9 +135,9 @@
         </div>
     </div>
     <!-- personal info tab-->
-    <div class="tab-pane fade" id="sub-personal0" role="tabpanel" aria-labelledby="sub-personal0-tab">
+    <!-- <div class="tab-pane fade" id="sub-personal0" role="tabpanel" aria-labelledby="sub-personal0-tab">
         @include('profile.inc.create.parcing')
-    </div>
+    </div> -->
     <div class="tab-pane fade show active" id="sub-personal1" role="tabpanel" aria-labelledby="sub-personal1-tab">
         @include('profile.inc.create.informations')
     </div>

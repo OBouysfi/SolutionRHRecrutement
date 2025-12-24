@@ -256,11 +256,16 @@ Route::middleware(['auth:sanctum'])->prefix('/events')->group(function () {
 
 Route::middleware(['auth:sanctum'])->prefix('/missions')->group(function () {
     Route::get('/listing', [JobOfferController::class, 'index'])->name('jobOffer.listing.data');
+    Route::get('/main-listing', [JobOfferController::class, 'mainListing'])->name('jobOffer.main-listing.data');
     Route::post('/storeJobOffer', [JobOfferController::class, 'storeJobOffer'])->name('jobOffer.storeJobOffer');
     Route::put('/updateJobOffer/{id}', [JobOfferController::class, 'updateJobOffer'])->name('updateJobOffer.update');
     Route::delete('/delete_jobOffer/{id}', [JobOfferController::class, 'destroy'])->name('delete_jobOffer.destroy');
     Route::post('/changeStatus/{id}/{status}', [JobOfferController::class, 'changeStatus'])->name('changeStatus');
     Route::get('/joboffershistory', [JobOfferController::class, 'jobOfferHistoryDataTable'])->name('jobOffer.data.history');
+});
+
+Route::middleware(['auth:sanctum'])->prefix('/clients')->group(function () {
+    Route::get('/{client}/evaluators', [\App\Http\Controllers\Web\JobOfferController::class, 'getClientEvaluators'])->name('api.clients.evaluators');
 });
 
 Route::middleware(['auth:sanctum'])->prefix('/evaluators')->group(function () {

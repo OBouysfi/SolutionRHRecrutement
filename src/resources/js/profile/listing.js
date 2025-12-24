@@ -3,6 +3,8 @@ $(document).ready(function () {
     var end_date = null;
     var profileIds = [];
     var table5 = null;
+    var startPage = 1;
+    
 
     // Detect current locale (Laravel usually sets this in a meta tag or JS variable)
     const locale = document.documentElement.lang || 'fr'; // fallback to 'fr'
@@ -20,12 +22,10 @@ $(document).ready(function () {
 
     // =============== START poste raw table ================= 
     function initializeDetailsTable(profileIds) {
-        // Destroy existing instance if it exists
         if ($.fn.DataTable.isDataTable('#custom-profile-listing-table')) {
             $('#custom-profile-listing-table').DataTable().destroy();
         }
 
-        // Initialize new DataTable
         table5 = $('#custom-profile-listing-table').DataTable({
             processing: true,
             serverSide: true,
@@ -190,8 +190,6 @@ $(document).ready(function () {
 
     $(document).on('click', '.show-row1', function () {
         var profileIds = $(this).data('ids');
-        console.log(profileIds);
-        // var profileIds = profileIds ? profileIds.split(',') : [];
         var profileIdsStr = profileIds.join(',');
 
         $("#profile-5").removeClass("d-none");
@@ -202,13 +200,6 @@ $(document).ready(function () {
     });
 
     // =============== END poste raw table =========================== 
-
-    // $.extend(true, $.fn.dataTable.defaults, {
-    //     language: {
-    //             url: dataTablesLangUrl,
-    //     },
-    // });
-
     // =============== START cvtheque table ========================= 
     function fetchProfilesData(page = 1, perPage = 10) {
         $.ajax({
@@ -512,12 +503,10 @@ $(document).ready(function () {
     $('#titlecalendar, #titlecalendar1').on('apply.daterangepicker', function (ev, picker) {
         start_date = picker.startDate.format('YYYY-MM-DD');
         end_date = picker.endDate.format('YYYY-MM-DD');
-        // Rafraîchir les tables avec les nouvelles dates
         refreshTables(start_date, end_date);
     });
     // =============== END date fillter ========================= 
 
-    fetchProfilesData();
     fetchStats();
 
 
@@ -593,27 +582,7 @@ $(document).ready(function () {
             },
         });
     }
-    //=============== Start Fill Stats cards =====================
-
-    // Gérer les clics sur la pagination
-    $(document).on("click", ".page-link", function (e) {
-        e.preventDefault();
-        let page = $(this).data("page");
-        if (page) {
-            fetchProfilesData(page);
-        }
-    });
-
-    // Événement pour soumettre les dates sélectionnées via AJAX
-    $("#titlecalendar, #titlecalendar1").on(
-        "apply.daterangepicker",
-        function (ev, picker) {
-            start_date = picker.startDate.format("YYYY-MM-DD");
-            end_date = picker.endDate.format("YYYY-MM-DD");
-            // Rafraîchir les tables avec les nouvelles dates
-            refreshTables(start_date, end_date);
-        }
-    );
+    //=============== End Fill Stats cards =====================
 
     function refreshTables(start_date, end_date) {
         fetchStats(start_date, end_date);
@@ -633,7 +602,6 @@ $(document).ready(function () {
         if ($.fn.DataTable.isDataTable("#validated-profile-listing-table")) {
             $("#validated-profile-listing-table").DataTable().destroy();
         }
-        fetchProfilesData();
 
         createDataTable(
             "#all-profile-listing-table",
@@ -816,15 +784,10 @@ $(document).ready(function () {
     }
 
     function updateCustomPaginationSetter(totalPages, currentPage, tableId) {
-        $(document).ready(function () {
-            $(".footable").footable();
-        });
-
         const paginationWrapper = $(`${tableId}-pagination .pagination`);
 
-        paginationWrapper.empty(); // Clear old pagination
+        paginationWrapper.empty();
 
-        // First & Prev buttons
         paginationWrapper.append(`
             <li class="footable-page-nav ${currentPage === 1 ? "disabled" : ""
             }" data-page="first">
@@ -837,7 +800,6 @@ $(document).ready(function () {
         `);
 
         // Page Numbers
-        let startPage = Math.max(1, currentPage - 4);
         let endPage = Math.min(totalPages, startPage + 9);
 
         if (endPage - startPage < 9) {
@@ -865,11 +827,7 @@ $(document).ready(function () {
             </li>
         `);
 
-        $("#validated-techniquesTable-pagination .label").text(
-            `${currentPage} sur ${totalPages}`
-        );
-
-        // Rebind pagination events
+        $("#validated-techniquesTable-pagination .label").text(`${currentPage} sur ${totalPages}`);
         addPaginationEventListeners();
     }
 
@@ -1219,31 +1177,31 @@ $(document).ready(function () {
 
     $(document).on('click', '.show-detail', function () {
         let tableid = $(this).data('detail');
-        $(".table5").addClass("d-none");
+        // $(".table5").addClass("d-none");
         if (tableid == 1) {
             loadChartData("all_profiles");
             $(".table1").addClass("d-none");
-            $("#ProfileMainFillter").removeClass("d-none");
-            $("#ProfileReturnToPreview").removeClass("d-none");
+            // $("#ProfileMainFillter").removeClass("d-none");
+            // $("#ProfileReturnToPreview").removeClass("d-none");
         } else if (tableid == 2) {
             loadChartData("active");
             $(".table2").addClass("d-none");
-            $("#ProfileMainFillter").removeClass("d-none");
-            $("#ProfileReturnToPreview").removeClass("d-none");
+            // $("#ProfileMainFillter").removeClass("d-none");
+            // $("#ProfileReturnToPreview").removeClass("d-none");
         } else if (tableid == 3) {
             loadChartData("qualified");
             $(".table3").addClass("d-none");
-            $("#ProfileMainFillter").removeClass("d-none");
-            $("#ProfileReturnToPreview").removeClass("d-none");
+            // $("#ProfileMainFillter").removeClass("d-none");
+            // $("#ProfileReturnToPreview").removeClass("d-none");
         } else if (tableid == 4) {
             loadChartData("validation");
             $(".table4").addClass("d-none");
-            $("#ProfileMainFillter").removeClass("d-none");
-            $("#ProfileReturnToPreview").removeClass("d-none");
+            // $("#ProfileMainFillter").removeClass("d-none");
+            // $("#ProfileReturnToPreview").removeClass("d-none");
         } else if (tableid == 0) {
-            loadChartData("all");
-            $("#ProfileMainFillter").addClass("d-none");
-            $("#ProfileReturnToPreview").addClass("d-none");
+            // loadChartData("all");
+            // $("#ProfileMainFillter").addClass("d-none");
+            // $("#ProfileReturnToPreview").addClass("d-none");
         }
 
         $(".alltable").addClass("d-none");
@@ -1429,7 +1387,6 @@ $(document).ready(function () {
         });
     };
 
-    // Create a New Folder
     window.createFolder = function () {
         let folderName = $("#newFolderName").val();
         let parentId = $("#newFolderParent").val();
@@ -1470,9 +1427,7 @@ $(document).ready(function () {
             },
         });
     };
-    /**
-     *  Action Ajouter au Vivier
-     */
+
     window.confirmAddToVivier = function (profileId) {
 
         $('#selectedProfileId').val(profileId);

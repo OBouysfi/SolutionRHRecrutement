@@ -207,7 +207,7 @@
                                 <div class="col-auto">
                                     <span id="meet-result">{{ __("generated.URL manuel")}}</span>
                                 </div>
-                                <div class="col-auto ms-auto">
+                                <!-- <div class="col-auto ms-auto">
                                     <div class="dropdown d-inline-block">
                                         <a class="text-secondary dd-arrow-none" data-bs-toggle="dropdown"
                                             aria-expanded="false" data-bs-display="static" role="button">
@@ -224,7 +224,7 @@
                                                     id="Zoom-url">{{ __("generated.Zoom")}}</a></li>
                                         </ul>
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                         <div class="col-auto to-change-meet" style="width: 44.5%;">

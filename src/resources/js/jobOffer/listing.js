@@ -1,174 +1,117 @@
-// import $ from 'jquery';
-// import 'datatables.net';
-// import 'datatables.net-bs5';
-
 $(document).ready(function () {
-    // On suppose que la variable jobOfferListingData est définie dans la vue Blade
-    // via <script>var jobOfferListingData = "..."</script>
-
     var start_date = null;
     var end_date = null;
-    var table = null;
+    var currentPage = 1;
+    var perPage = 10;
 
     // Detect current locale (Laravel usually sets this in a meta tag or JS variable)
     const locale = document.documentElement.lang || 'fr'; // fallback to 'fr'
 
-    // Map locale to DataTables language file
-    const dataTablesLangUrl = {
-        fr: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/fr-FR.json",
-        en: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/en-GB.json",
-        es: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json",
-        zh: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/zh.json",
-        pt: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/pt-PT.json",
-        ar: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/ar.json"
-    }[locale] || "https://cdn.datatables.net/plug-ins/1.13.6/i18n/fr-FR.json";
-
     $(document).on("click", "#refresh-date-fillter", function () {
         start_date = null;
         end_date = null;
-        refreshTables(start_date, end_date);
+        fetchJobOffersData(1, perPage);
     });
-
-    function refreshTables() {
-        if ($.fn.DataTable.isDataTable("#missionTable")) {
-            $("#missionTable").DataTable().destroy();
-        }
-        getData();
-    }
 
     $("#titlecalendar, #titlecalendar1").on(
         "apply.daterangepicker",
         function (ev, picker) {
             start_date = picker.startDate.format("YYYY-MM-DD");
             end_date = picker.endDate.format("YYYY-MM-DD");
-            refreshTables();
+            fetchJobOffersData(1, perPage);
         }
     );
 
-    getData();
-
-    function getData() {
-        table = $("#missionTable").DataTable({
-            processing: false,
-            serverSide: true,
-            lengthChange: false,
-            searching: false,
-            // language: {
-            //     url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/fr-FR.json",
-            //     info: "Affichage de _START_ à _END_ sur _TOTAL_ entrées",
-            //     emptyTable: "Aucune donnée disponible dans le tableau",
-            //     infoEmpty: "Affichage de 0 à 0 sur 0 entrée",
-            // },
-
-            language: {
-                url: dataTablesLangUrl,
+    // Function to fetch job offers data
+    function fetchJobOffersData(page = 1, perPageValue = 10) {
+        $.ajax({
+            url: jobOfferMainListingData,
+            type: "GET",
+            dataType: "json",
+            data: {
+                page: page,
+                perPage: perPageValue,
+                start_date: start_date,
+                end_date: end_date,
+                pays: $("#filter-pays").val(),
+                ville: $("#filter-ville").val(),
+                client: $("#filter-client").val(),
+                diploma: $("#filter-diploma").val(),
+                status_id: $("#filter-status-jobOffre").val(),
             },
+            success: function (response) {
+                const data = response.data || [];
+                const tbody = $("#missionTable tbody");
+                tbody.empty();
 
-            ajax: {
-                url: jobOfferListingData,
-                data: function (d) {
-                    // On envoie nos filtres au serveur
-                    d.pays = $("#filter-pays").val();
-                    d.ville = $("#filter-ville").val();
-                    d.client = $("#filter-client").val();
-                    d.diploma = $("#filter-diploma").val();
-                    d.status_id = $("#filter-status-jobOffre").val();
-                    d.start_date = start_date;
-                    d.end_date = end_date;
+                if (data.length === 0) {
+                    tbody.append(`
+                        <tr>
+                            <td colspan="13" class="text-center">${window.translations?.no_data_available || 'Aucune donnée disponible dans le tableau'}</td>
+                        </tr>
+                    `);
+                } else {
+                    data.forEach(function (jobOffer) {
+                        const row = `
+                            <tr>
+                                <td style="text-align: center;">${jobOffer.logo}</td>
+                                <td style="text-align: center;">${jobOffer.client_number}</td>
+                                <td style="text-align: center;">${jobOffer.client_name}</td>
+                                <td style="text-align: center;">${jobOffer.title}</td>
+                                <td style="text-align: center;">${jobOffer.contract_type}</td>
+                                <td style="text-align: center;">${jobOffer.city_name}</td>
+                                <td style="text-align: center;">${jobOffer.diploma_label}</td>
+                                <td style="text-align: center;">${jobOffer.experience_count}</td>
+                                <td style="text-align: center;">${jobOffer.nbr_profiles}</td>
+                                <td style="text-align: center;">${jobOffer.start_date}</td>
+                                <td style="text-align: center;">${jobOffer.end_date}</td>
+                                <td style="text-align: center;">${jobOffer.status}</td>
+                                <td style="text-align: center;">${jobOffer.action}</td>
+                            </tr>
+                        `;
+                        tbody.append(row);
+                    });
+                }
 
-                    // d.type_contrat = $('#filter-type-contrat').val();
-                },
+                // Update pagination
+                const totalPages = response.last_page || 1;
+                const currentPageNum = response.current_page || 1;
+                updatePagination(totalPages, currentPageNum);
             },
-            columns: [
-                {
-                    data: "logo",
-                    name: "logo",
-                    orderable: false,
-                    searchable: false,
-                },
-                {
-                    data: "client_number",
-                    name: "client_number",
-                    orderable: false,
-                },
-                { data: "client_name", name: "client_name", orderable: false },
-                { data: "title", name: "title", orderable: false },
-                {
-                    data: "contract_type",
-                    name: "contract_type",
-                    orderable: false,
-                },
-                { data: "city_name", name: "city_name", orderable: false },
-                {
-                    data: "diploma_label",
-                    name: "diploma_label",
-                    orderable: false,
-                },
-                {
-                    data: "experience_count",
-                    name: "experience_count",
-                    orderable: false,
-                },
-                {
-                    data: "nbr_profiles",
-                    name: "nbr_profiles",
-                    orderable: false,
-                },
-                { data: "start_date", name: "start_date" },
-                { data: "end_date", name: "end_date" },
-                // { data: 'status', name: 'status' },
-                { data: "status_id", name: "status_id", orderable: false },
-                {
-                    data: "action",
-                    name: "action",
-                    orderable: false,
-                    searchable: false,
-                },
-            ],
-            // callback pour le redraw => pagination custom
-            drawCallback: function (settings) {
-                updateCustomPagination(settings);
+            error: function (xhr, status, error) {
+                console.error("Error fetching job offers:", error);
+                const tbody = $("#missionTable tbody");
+                tbody.empty();
+                tbody.append(`
+                    <tr>
+                        <td colspan="13" class="text-center text-danger">${window.translations?.error_loading_data || 'Erreur lors du chargement des données'}</td>
+                    </tr>
+                `);
             },
         });
     }
 
-    // Rafraîchir la DataTable lorsque les filtres changent
-    $(".filter-block select").on("change", function () {
-        table.ajax.reload();
-    });
+    function updatePagination(totalPages, currentPageNum) {
+        const paginationContainer = $("#footable-pagination");
+        paginationContainer.empty();
 
-    // Exemple de pagination custom
+        let paginationHtml = `<div class="footable-pagination-wrapper">
+            <ul class="pagination">`;
 
-    function updateCustomPagination(settings) {
-        const pageInfo = settings.json; // Récupère les informations de pagination
-        const recordsTotal = pageInfo.recordsTotal; // Total des enregistrements
-        const pageLength = settings._iDisplayLength; // Nombre d'enregistrements par page
-        const totalPages = Math.ceil(recordsTotal / pageLength);
-        const currentPage = settings._iDisplayStart / pageLength + 1;
-
-        // Réinitialiser le contenu de la pagination
-        $(document).ready(function () {
-            $(".footable").footable();
-        });
-        const paginationWrapper = $("#footable-pagination .pagination");
-        paginationWrapper.empty();
-
-        // First & Prev buttons
-        paginationWrapper.append(`
-            <li class="footable-page-nav ${
-                currentPage === 1 ? "disabled" : ""
-            }" data-page="first">
+        // First button
+        paginationHtml += `
+            <li class="footable-page-nav ${currentPageNum === 1 ? "disabled" : ""}" data-page="first">
                 <a class="footable-page-link" href="#">«</a>
-            </li>
-            <li class="footable-page-nav ${
-                currentPage === 1 ? "disabled" : ""
-            }" data-page="prev">
+            </li>`;
+
+        // Previous button
+        paginationHtml += `
+            <li class="footable-page-nav ${currentPageNum === 1 ? "disabled" : ""}" data-page="prev">
                 <a class="footable-page-link" href="#">‹</a>
-            </li>
-        `);
+            </li>`;
 
         // Page Numbers
-        let startPage = Math.max(1, currentPage - 4);
+        let startPage = Math.max(1, currentPageNum - 4);
         let endPage = Math.min(totalPages, startPage + 9);
 
         if (endPage - startPage < 9) {
@@ -176,73 +119,82 @@ $(document).ready(function () {
         }
 
         for (let i = startPage; i <= endPage; i++) {
-            paginationWrapper.append(`
-                <li class="footable-page visible ${
-                    i === currentPage ? "active" : ""
-                }" data-page="${i}">
+            paginationHtml += `
+                <li class="footable-page visible ${i === currentPageNum ? "active" : ""}" data-page="${i}">
                     <a class="footable-page-link" href="#">${i}</a>
                 </li>
-            `);
+            `;
         }
 
-        // Next & Last buttons
-        paginationWrapper.append(`
-            <li class="footable-page-nav ${
-                currentPage === totalPages ? "disabled" : ""
-            }" data-page="next">
+        // Next button
+        paginationHtml += `
+            <li class="footable-page-nav ${currentPageNum === totalPages ? "disabled" : ""}" data-page="next">
                 <a class="footable-page-link" href="#">›</a>
-            </li>
-            <li class="footable-page-nav ${
-                currentPage === totalPages ? "disabled" : ""
-            }" data-page="last">
+            </li>`;
+
+        // Last button
+        paginationHtml += `
+            <li class="footable-page-nav ${currentPageNum === totalPages ? "disabled" : ""}" data-page="last">
                 <a class="footable-page-link" href="#">»</a>
-            </li>
-        `);
+            </li>`;
 
-        $("#validated-techniquesTable-pagination .label").text(
-            `${currentPage} sur ${totalPages}`
-        );
+        paginationHtml += `</ul>
+            <div class="divider"></div>
+            <span class="label label-default">${currentPageNum} sur ${totalPages}</span>
+        </div>`;
 
-        // Rebind pagination events
-        addPaginationEventListeners();
+        paginationContainer.append(paginationHtml);
+
+        // Bind pagination events
+        addPaginationEventListeners(totalPages);
     }
 
-    function addPaginationEventListeners() {
-        $("#footable-pagination .footable-page-nav").on("click", function (e) {
+    function addPaginationEventListeners(totalPages) {
+        $("#footable-pagination .footable-page-nav").off("click").on("click", function (e) {
             e.preventDefault();
             const action = $(this).data("page");
-            const table = $("#missionTable").DataTable();
 
             if ($(this).hasClass("disabled")) {
                 return;
             }
 
+            let newPage = currentPage;
             if (action === "first") {
-                table.page("first").draw("page");
+                newPage = 1;
             } else if (action === "prev") {
-                table.page("previous").draw("page");
+                newPage = Math.max(1, currentPage - 1);
             } else if (action === "next") {
-                table.page("next").draw("page");
+                newPage = Math.min(totalPages, currentPage + 1);
             } else if (action === "last") {
-                table.page("last").draw("page");
+                newPage = totalPages;
             }
+
+            currentPage = newPage;
+            fetchJobOffersData(currentPage, perPage);
         });
 
-        $("#footable-pagination .footable-page").on("click", function (e) {
+        $("#footable-pagination .footable-page").off("click").on("click", function (e) {
             e.preventDefault();
-            const page = $(this).data("page") - 1; // DataTables utilise un index basé sur 0
-            const table = $("#missionTable").DataTable();
-
-            table.page(page).draw("page");
+            const page = parseInt($(this).data("page"));
+            currentPage = page;
+            fetchJobOffersData(currentPage, perPage);
         });
     }
 
-    // Exemple : si vous avez un sélecteur custom pour le nombre d’éléments par page
-    $("#customLength").on("change", function () {
-        var selectedValue = $(this).val();
-        table.page.len(selectedValue).draw();
+    // Refresh when filters change
+    $(".filter-block select").on("change", function () {
+        currentPage = 1;
+        fetchJobOffersData(currentPage, perPage);
     });
 
+    // Custom length selector
+    $("#customLength").on("change", function () {
+        perPage = parseInt($(this).val());
+        currentPage = 1;
+        fetchJobOffersData(currentPage, perPage);
+    });
+
+    // Country filter change
     $("#filter-pays").on("change", function () {
         var selectedCountryId = $(this).val();
         $("#filter-ville").val("Tous");
@@ -251,20 +203,18 @@ $(document).ready(function () {
             $("#filter-ville option").show();
         } else {
             $("#filter-ville option").hide();
-
-            $('#filter-ville option[value="Tous"]').show(); // Toujours afficher l'option "Tous"
-            $(
-                '#filter-ville option[data-country="' + selectedCountryId + '"]'
-            ).show();
+            $('#filter-ville option[value="Tous"]').show();
+            $('#filter-ville option[data-country="' + selectedCountryId + '"]').show();
         }
 
         $("#filter-ville").trigger("chosen:updated");
+        currentPage = 1;
+        fetchJobOffersData(currentPage, perPage);
     });
 
     /**
-     *  Fonction pour afficher le drapeau dans l'élément sélectionné
+     * Fonction pour afficher le drapeau dans l'élément sélectionné
      */
-
     $(window).on("load", function () {
         $(".chosenoptgroup").chosen({
             width: "100%",
@@ -316,4 +266,7 @@ $(document).ready(function () {
         updateDropdownImages();
         updateSelectedImage();
     });
+
+    // Initial load
+    fetchJobOffersData(1, perPage);
 });

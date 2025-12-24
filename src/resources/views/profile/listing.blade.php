@@ -880,10 +880,9 @@
                                             <!------------------------All Profils Table-------------------------->
                                             <!-- ====================================== START ===================================== -->
                                             <!-- =================================  ALL CVthèque  ================================ -->
-                                            <div class="table0 tableall alltable dataTable table-responsive"
+                                            <!-- <div class="table0 tableall alltable dataTable table-responsive"
                                                 id="profile-0">
                                                 <div class="row" style="padding-left: 13px;">
-                                                    {{-- <h6 class="title custom-title">CVthèque</h6> --}}
                                                     <div class="card-header bg-gradient-theme-light">
                                                         <div class="row align-items-center">
                                                             <h6 class="fw-medium mb-0">{{ __('generated.CVthèque') }}</h6>
@@ -920,34 +919,8 @@
                                                         <tbody id="profilesTableBody" style="font-size: 14px"></tbody>
                                                     </table>
                                                 </div>
-                                                <!-- <table class="table" id="profile-listing-table" style="width: 100%">
-                                                                    <thead class="translated_text"
-                                                                        style="font-size: 14px;border-top: 1px solid #e9e9e9;">
-                                                                        <tr style="vertical-align: middle;">
-                                                                            <th class="" rowspan="1"
-                                                                                style="font-weight: 600">{{ __('generated.id') }}</th>
-                                                                            <th class="" rowspan="1"
-                                                                                style="font-weight: 600">{{ __('generated.Poste') }}</th>
-                                                                            <th class="" style="font-weight: 600">{{ __('generated.Diplôme') }}</th>
-                                                                            <th class="translated_text" rowspan="2"
-                                                                                style="vertical-align: middle;width: 20px">
-                                                                            </th>
-                                                                            <th class="" style="font-weight: 600">{{ __('generated.Option') }}</th>
-                                                                            <th class="" rowspan="1"
-                                                                                style="font-weight: 600">{{ __('generated.Expérience') }}</th>
-                                                                            <th class="" rowspan="1"
-                                                                                style="font-weight: 600">{{ __('generated.Langue') }}</th>
-                                                                            <th class="" rowspan="1"
-                                                                                style="font-weight: 600;text-align: right">{{ __('generated.Total') }}</th>
-                                                                            <th class="" rowspan="1" style="font-weight: 600;text-align: right;width: 160px;">{{ __('generated.Action') }}</th>
-                                                                            </tr>
-                                                                    </thead>
-                                                                    <tbody id="profilesTableBody" style="font-size: 14px">
-                                                                    </tbody>
-                                                                </table> -->
                                                 <div class="row align-items-center mx-0 mb-3 mt-3">
                                                     <div class="col-6"></div>
-                                                    {{-- <div id="paginationContainer" class="mt-3"></div> --}}
 
                                                     <div class="col-6 footable-paging-external footable-paging-right footable-pagination"
                                                         id="profile-listing-table-pagination">
@@ -960,14 +933,14 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> -->
                                             <!-- =================================  ALL CVthèque  ================================ -->
                                             <!-- ====================================== END ===================================== -->
 
 
                                             <!-- ====================================== START ===================================== -->
                                             <!-- =================================  CVthèque ROW  ================================ -->
-                                            <div class="table5 d-none alltable dataTable  table-responsive"
+                                            <!-- <div class="table5 d-none alltable dataTable  table-responsive"
                                                 id="profile-5">
                                                 <div class="row" style="padding-left: 13px;">
                                                     <div class="card-header bg-gradient-theme-light">
@@ -993,27 +966,6 @@
                                                     </thead>
                                                     <tbody></tbody>
                                                 </table>
-                                                <!-- <table id="custom-profile-listing-table"
-                                                                class="table offres-table Intégrale w-100" data-show-toggle="true"
-                                                                style="width: 100%">
-                                                                <thead style="font-size: 13px;border-top: 1px solid #e9e9e9;">
-                                                                <tr style="vertical-align: middle;">
-                                                                    <th rowspan="2" style="font-weight: 600;text-align: center;width: 12px;">#</th>
-                                                                    <th rowspan="2" style="font-weight: 600;width: 120px;">Matricule</th>
-                                                                    <th rowspan="2" style="font-weight: 600;width: 134px;">Prénom</th>
-                                                                    <th rowspan="2" style="font-weight: 600;width: 147px;">Nom</th>
-                                                                    <th rowspan="2" style="font-weight: 600;width: 123px;">Diplôme</th>
-                                                                    <th rowspan="2" style="font-weight: 600;width: 191px;">Option</th>
-                                                                    <th rowspan="2" style="font-weight: 600;width: 130px;">Expérience</th>
-                                                                    <th rowspan="2" style="font-weight: 600;width: 135px;">Langue</th>
-                                                                    <th rowspan="2" style="font-weight: 600;text-align: right;width: 71px;">Action</th>
-                                                                </tr>
-                                                                </thead>
-                                                                <tbody style="vertical-align: middle;font-size: 13px;}">
-
-                                                                </tbody>
-                                                            </table> -->
-
                                                 <div class="row align-items-center mx-0 mb-3">
                                                     <div class="col-6"></div>
                                                     <div class="col-6 footable-paging-external footable-paging-right footable-pagination"
@@ -1027,7 +979,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> -->
                                             <!-- =================================  CVthèque ROW  ================================ -->
                                             <!-- ====================================== END ===================================== -->
 
@@ -1035,7 +987,7 @@
                                             <!-- ====================================== START ===================================== -->
                                             <!-- =================================  Active Profiles  ================================ -->
 
-                                            <div class="table1 d-none alltable dataTable  table-responsive"
+                                            <div class="table1 alltable dataTable  table-responsive"
                                                 id="profile-1">
                                                 {{-- <div class="row" style="padding-left: 13px;"> --}}
                                                 {{-- <h6 class="title custom-title">CVthèque</h6> --}}

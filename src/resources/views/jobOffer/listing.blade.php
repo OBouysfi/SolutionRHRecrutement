@@ -174,7 +174,6 @@
                                                 </div>
                                                 </div>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
@@ -327,12 +326,7 @@
                                                 <div class="col-6"></div>
                                                 <div class="col-6 footable-paging-external footable-paging-right mt-3"
                                                     id="footable-pagination">
-                                                    <div class="footable-pagination-wrapper">
-                                                        <ul class="pagination"></ul>
-                                                        <div class="divider"></div>
-                                                        <span class="label label-default">1 <span
-                                                                >{{ __("generated.sur") }}</span> 1</span>
-                                                    </div>
+                                                    <!-- Pagination will be populated by JavaScript -->
                                                 </div>
                                             </div>
 
@@ -360,11 +354,12 @@
     @include('jobOffer.inc.share')
 
 
-    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
-    {{-- <script src="{{ asset('assets/js/jobOffer/listing.js') }}"></script> --}}
+    {{-- DataTables scripts removed - using custom AJAX now --}}
+    {{-- <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script> --}}
+    {{-- <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script> --}}
     <script>
         var jobOfferListingData = "{{ route('jobOffer.listing.data') }}";
+        var jobOfferMainListingData = "{{ route('jobOffer.main-listing.data') }}";
     </script>
 
     @vite(['resources/js/jobOffer/listing.js', 'resources/js/jobOffer/confirmeStatusAnnuler.js'])
